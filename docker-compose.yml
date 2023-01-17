@@ -8,6 +8,7 @@ services:
       dockerfile: ProfilesManager.API/ProfilesManager.API/Dockerfile
     ports:
       - 8010:80
+      - 8011:443
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
@@ -21,6 +22,7 @@ services:
       dockerfile: OfficesManager.API/OfficesManager.API/Dockerfile
     ports:
       - 8020:80
+      - 8021:443
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
@@ -34,6 +36,7 @@ services:
       dockerfile: ServicesManager.API/ServicesManager.API/Dockerfile
     ports:
       - 8030:80
+      - 8031:443
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
