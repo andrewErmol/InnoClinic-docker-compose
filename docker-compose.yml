@@ -1,0 +1,103 @@
+version: '3.4'
+
+services:
+  profiles_manager:
+    hostname: profiles_manager
+    build:
+      context: .
+      dockerfile: ProfilesManager.API/ProfilesManager.API/Dockerfile
+    ports:
+      - 8010:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - rabbitmq
+      - sql_server_profiles
+
+  offices_manager:
+    hostname: offices_manager
+    build:
+      context: .
+      dockerfile: OfficesManager.API/OfficesManager.API/Dockerfile
+    ports:
+      - 8020:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - rabbitmq
+      - sql_server_offices
+
+  services_manager:
+    hostname: services_manager
+    build:
+      context: .
+      dockerfile: ServicesManager.API/ServicesManager.API/Dockerfile
+    ports:
+      - 8030:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - postgres
+
+  rabbitmq:
+    image: rabbitmq:3.9-management
+    container_name: rabbitmq
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+
+  sql_server_profiles:
+    image: "mcr.microsoft.com/mssql/server:2019-latest"
+    ports:
+      - 1401:1433
+    environment:
+      SA_PASSWORD: "Your_password123"
+      ACCEPT_EULA: "Y"
+    user: root
+    volumes:
+      - db_profiles:/var/opt/mssql/data
+
+  sql_server_offices:
+    image: "mcr.microsoft.com/mssql/server:2019-latest"
+    ports:
+      - 1402:1433
+    environment:
+      SA_PASSWORD: "Your_password123"
+      ACCEPT_EULA: "Y"
+    user: root
+    volumes:
+      - db_offices:/var/opt/mssql/data
+
+  postgres:
+    image: postgres
+    container_name: local_pgdb
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 12345
+    ports:
+      - 5432:5432
+    user: root
+    volumes:
+      - db_services:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: someuser@something.com
+      PGADMIN_DEFAULT_PASSWORD: 1111
+    user: root
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+
+volumes:
+  db_profiles:
+  db_offices:
+  db_services:
+  pgadmin-data:
