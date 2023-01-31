@@ -22,7 +22,7 @@ services:
     ports:
       - 8020:80
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Docker
     depends_on:
       - rabbitmq
       - sql_server
@@ -37,7 +37,21 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     depends_on:
+      - rabbitmq
       - postgres
+
+  services_manager:
+    hostname: appointments_manager
+    build:
+      context: .
+      dockerfile: AppointmentsManager.API/AppointmentsManager.API/Dockerfile
+    ports:
+      - 8040:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - rabbitmq
+      - sql_server
 
   rabbitmq:
     image: rabbitmq:3.9-management
@@ -60,6 +74,8 @@ services:
     volumes:
       - db_profiles:/var/opt/mssql/data
       - db_offices:/var/opt/mssql/data
+      - db_services:/var/opt/mssql/data
+      - db_appointments:/var/opt/mssql/data
 
   postgres:
     image: postgres
