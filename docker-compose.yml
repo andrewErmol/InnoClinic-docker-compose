@@ -106,4 +106,5 @@ volumes:
   db_profiles:
   db_offices:
   db_services:
+  db_appointments:
   pgadmin-data:
