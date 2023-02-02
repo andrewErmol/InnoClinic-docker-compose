@@ -9,7 +9,7 @@ services:
     ports:
       - 8010:80
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Docker
     depends_on:
       - rabbitmq
       - sql_server
@@ -35,12 +35,12 @@ services:
     ports:
       - 8030:80
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Docker
     depends_on:
       - rabbitmq
       - postgres
 
-  services_manager:
+  appointments_manager:
     hostname: appointments_manager
     build:
       context: .
@@ -48,7 +48,7 @@ services:
     ports:
       - 8040:80
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_ENVIRONMENT=Docker
     depends_on:
       - rabbitmq
       - sql_server
@@ -72,9 +72,8 @@ services:
       ACCEPT_EULA: "Y"
     user: root
     volumes:
-      - db_profiles:/var/opt/mssql/data
       - db_offices:/var/opt/mssql/data
-      - db_services:/var/opt/mssql/data
+      - db_profiles:/var/opt/mssql/data
       - db_appointments:/var/opt/mssql/data
 
   postgres:
@@ -103,8 +102,8 @@ services:
       - pgadmin-data:/var/lib/pgadmin
 
 volumes:
-  db_profiles:
   db_offices:
-  db_services:
+  db_profiles:
   db_appointments:
+  db_services:
   pgadmin-data:
