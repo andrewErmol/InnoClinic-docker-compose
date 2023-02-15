@@ -1,6 +1,28 @@
 version: '3.4'
 
 services:
+  gateway:
+    hostname: gateway
+    build:
+      context: .
+      dockerfile: OcelotApiGateway/OcelotApiGateway/Dockerfile
+    ports:
+      - 8000:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+    links:
+      - profiles_manager
+      - offices_manager
+      - services_manager
+      - appointments_manager
+      - documents_manager
+    depends_on:
+      - profiles_manager
+      - offices_manager
+      - services_manager
+      - appointments_manager
+      - documents_manager
+
   profiles_manager:
     hostname: profiles_manager
     build:
@@ -53,6 +75,18 @@ services:
       - rabbitmq
       - sql_server
 
+  documents_manager:
+    hostname: documents_manager
+    build:
+      context: .
+      dockerfile: DocumentsManager.API/DocumentsManager.API/Dockerfile
+    ports:
+      - 8050:80
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+    depends_on:
+      - mongo
+
   rabbitmq:
     image: rabbitmq:3.9-management
     container_name: rabbitmq
@@ -101,9 +135,19 @@ services:
     volumes:
       - pgadmin-data:/var/lib/pgadmin
 
+  mongo:
+    image: mongo
+    restart: always
+    container_name: mongo
+    ports:
+      - 27001:27017
+    volumes:
+      - mongo:/data/db
+
 volumes:
   db_offices:
   db_profiles:
   db_appointments:
   db_services:
   pgadmin-data:
+  mongo:
